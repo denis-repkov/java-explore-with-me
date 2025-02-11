@@ -2,6 +2,7 @@ package ru.practicum.stat.server.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stat.dto.CreateEndpointHitDto;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.server.exception.ConditionException;
@@ -21,12 +22,14 @@ public class StatsService {
 
     private final EndpointHitMapper mapper;
 
+    @Transactional
     public EndpointHitDto saveHit(CreateEndpointHitDto hit) {
         EndpointHit toCreate = mapper.map(hit);
         EndpointHit created = hitRepository.save(toCreate);
         return mapper.map(created);
     }
 
+    @Transactional(readOnly = true)
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         if (start.isAfter(end)) {
             throw new ConditionException("Время начала должно быть позже времени окончания");

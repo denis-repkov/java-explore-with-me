@@ -17,8 +17,12 @@ public class StatisticsService {
 
     private final StatisticsClient statClient;
 
-    public void sendStat(StatEvent statEvent, HttpServletRequest request) {
+    public void sendStat(String serviceName, HttpServletRequest request) {
         String ip = request.getRemoteAddr();
+        StatEvent statEvent = StatEvent.builder()
+                .serviceName(serviceName)
+                .uri(request.getRequestURI())
+                .build();
 
         CreateEndpointHitDto requestDto = new CreateEndpointHitDto();
         requestDto.setTimestamp(LocalDateTime.now());

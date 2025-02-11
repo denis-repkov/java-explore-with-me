@@ -1,6 +1,5 @@
 package ru.practicum.ewm.controller.private_access;
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.RequestService;
 import ru.practicum.ewm.service.StatisticsService;
 
@@ -33,11 +31,7 @@ public class PrivateRequestController {
     @GetMapping("/{userId}/requests")
     @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> getUserRequests(@PathVariable int userId, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return requestService.getRequestsByUserId(userId);
     }
 
@@ -47,11 +41,7 @@ public class PrivateRequestController {
             @PathVariable int userId,
             @RequestParam int eventId,
             HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return requestService.createParticipationRequest(userId, eventId);
     }
 
@@ -61,11 +51,8 @@ public class PrivateRequestController {
             @PathVariable int userId,
             @PathVariable int requestId,
             HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return requestService.cancelRequest(userId, requestId);
     }
+
 }

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.StatisticsService;
 import ru.practicum.ewm.service.UserService;
 
@@ -39,55 +38,35 @@ public class AdminUserController {
                                  @RequestParam(defaultValue = "0") int from,
                                  @RequestParam(defaultValue = "10") int size,
                                  HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return userService.findAll(ids, from, size);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public UserDto findById(@PathVariable int id, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return userService.findById(id);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public boolean activateUser(@PathVariable int id, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return userService.activate(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto add(@Valid @RequestBody NewUserRequest newUser, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return userService.add(newUser);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remove(@PathVariable int id, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         userService.delete(id);
     }
 

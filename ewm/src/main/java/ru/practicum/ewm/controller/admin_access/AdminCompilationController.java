@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.compilation.CompilationDto;
 import ru.practicum.ewm.dto.compilation.NewCompilationDto;
 import ru.practicum.ewm.dto.compilation.UpdateCompilationRequest;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.CompilationService;
 import ru.practicum.ewm.service.StatisticsService;
 
@@ -33,11 +32,7 @@ public class AdminCompilationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto add(@Valid @RequestBody NewCompilationDto dto, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return compilationService.add(dto);
     }
 
@@ -46,22 +41,14 @@ public class AdminCompilationController {
     public UpdateCompilationRequest updateCompilation(@PathVariable int compId,
                                                       @Valid @RequestBody UpdateCompilationRequest compRequest,
                                                       HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return compilationService.update(compId, compRequest);
     }
 
     @DeleteMapping("/{compId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remove(@PathVariable int compId, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         compilationService.delete(compId);
     }
 

@@ -9,7 +9,6 @@ import lombok.Data;
 @Data
 public class NewUserRequest {
 
-    @NotNull
     @NotBlank
     @Size(min = 2, max = 250)
     private String name;

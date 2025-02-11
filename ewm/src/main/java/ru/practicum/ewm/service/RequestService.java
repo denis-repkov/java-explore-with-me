@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dal.EventRepository;
 import ru.practicum.ewm.dal.RequestRepository;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateRequest;
@@ -32,6 +33,7 @@ public class RequestService {
 
     private final ParticipationRequestMapper requestMapper;
 
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequestsByUserId(int userId) {
         return requestRepository.findByRequesterId(userId)
                 .stream()
@@ -39,6 +41,7 @@ public class RequestService {
                 .toList();
     }
 
+    @Transactional
     public ParticipationRequestDto createParticipationRequest(int userId, int eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(EVENT_NOT_FOUND + eventId));
@@ -80,6 +83,7 @@ public class RequestService {
         return requestMapper.map(savedRequest);
     }
 
+    @Transactional
     public ParticipationRequestDto cancelRequest(int userId, int requestId) {
         ParticipationRequest request = requestRepository.findByIdAndRequesterId(requestId, userId)
                 .orElseThrow(() -> new ValidationException("Запрос не найден"));
@@ -94,6 +98,7 @@ public class RequestService {
         return requestMapper.map(updatedRequest);
     }
 
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequestsInfo(int userId, int eventId) {
         List<ParticipationRequest> requests = requestRepository.findByInitiatorIdAndEventId(userId, eventId);
         return requests.stream()
@@ -101,6 +106,7 @@ public class RequestService {
                 .toList();
     }
 
+    @Transactional
     public EventRequestStatusUpdateResult updateRequestStatus(int initiatorId, int eventId, EventRequestStatusUpdateRequest request) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException(EVENT_NOT_FOUND + eventId));

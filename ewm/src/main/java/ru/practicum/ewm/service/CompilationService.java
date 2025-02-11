@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dal.CompilationRepository;
 import ru.practicum.ewm.dal.EventRepository;
 import ru.practicum.ewm.dal.RequestRepository;
@@ -32,6 +33,7 @@ public class CompilationService {
 
     private final EventMapper eventMapper;
 
+    @Transactional
     public CompilationDto add(NewCompilationDto request) {
         List<Event> events = eventRepository.findByIdIn(request.getEvents());
         Compilation toCreate = compilationMapper.map(request, events);
@@ -39,10 +41,12 @@ public class CompilationService {
         return compilationMapper.map(created, created.getStatEvents().stream().map(eventMapper::mapToShort).toList());
     }
 
+    @Transactional
     public void delete(int id) {
         compilationRepository.deleteById(id);
     }
 
+    @Transactional
     public UpdateCompilationRequest update(int id, UpdateCompilationRequest request) {
         Compilation compilation = compilationRepository.findById(id).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND + id));
         List<Event> events = eventRepository.findByIdIn(request.getEvents());
@@ -50,12 +54,14 @@ public class CompilationService {
         return compilationMapper.map(compilationRepository.save(toUpdate));
     }
 
+    @Transactional(readOnly = true)
     public List<CompilationDto> findAll(boolean pinned, int from, int size) {
         return compilationRepository.findCompilations(pinned, from, size).stream()
                 .map(c -> compilationMapper.map(c, eventMapper.mapToShort(c.getStatEvents())))
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public CompilationDto findById(int id) {
         Compilation compilation = compilationRepository.findById(id).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND + id));
         return compilationMapper.map(compilation, eventMapper.mapToShort(compilation.getStatEvents()));

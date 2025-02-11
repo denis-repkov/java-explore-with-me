@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dal.CategoryRepository;
 import ru.practicum.ewm.dal.EventRepository;
 import ru.practicum.ewm.dal.UserRepository;
@@ -43,6 +44,7 @@ public class EventService {
 
     private final EventMapper eventMapper;
 
+    @Transactional(readOnly = true)
     public List<EventFullDto> adminFindAll(List<Integer> users,
                                            List<EventStatus> states,
                                            List<Integer> categories,
@@ -57,6 +59,7 @@ public class EventService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<EventShortDto> findFilteredEvents(String text,
                                                   List<Integer> categories,
                                                   Boolean paid,
@@ -79,6 +82,7 @@ public class EventService {
                 rangeEnd, onlyAvailable, sort, pageable).toList());
     }
 
+    @Transactional(readOnly = true)
     public List<EventShortDto> findByInitiator(int initiatorId, int from, int size) {
         Pageable pageable = PageRequest.of(from / size, size);
         return eventRepository.findByInitiator_Id(initiatorId, pageable).stream()
@@ -86,18 +90,21 @@ public class EventService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public EventFullDto findByInitiatorAndEvent(int initiatorId, int eventId) {
         Event event = eventRepository.findByInitiator_IdAndId(initiatorId, eventId)
                 .orElseThrow(() -> new NotFoundException(EVENT_NOT_FOUND + eventId + " и пользователь с ID: " + initiatorId));
         return eventMapper.mapToFull(event);
     }
 
+    @Transactional(readOnly = true)
     public EventFullDto findPublishedEventById(int eventId) {
         Event event = eventRepository.findByIdAndState(eventId, PUBLISHED)
                 .orElseThrow(() -> new NotFoundException(EVENT_NOT_FOUND + eventId));
         return eventMapper.mapToFull(event);
     }
 
+    @Transactional
     public void updateViews(int eventId, int views) {
         Event event = eventRepository.findByIdAndState(eventId, PUBLISHED)
                 .orElseThrow(() -> new NotFoundException(EVENT_NOT_FOUND + eventId));
@@ -105,6 +112,7 @@ public class EventService {
         eventRepository.save(event);
     }
 
+    @Transactional
     public EventFullDto add(int initiatorId, NewEventDto dto) {
         checkEventTime(dto.getEventDate(), 2);
 
@@ -118,6 +126,7 @@ public class EventService {
         return eventMapper.mapToFull(created);
     }
 
+    @Transactional
     public EventFullDto userUpdate(int userId, int eventId, UpdateEventUserRequest request) {
         checkUpdateEventRequest(request, 2);
 
@@ -136,6 +145,7 @@ public class EventService {
         return eventMapper.mapToFull(updated);
     }
 
+    @Transactional
     public EventFullDto adminUpdate(int eventId, UpdateEventAdminRequest request) {
         checkUpdateEventRequest(request, 1);
 

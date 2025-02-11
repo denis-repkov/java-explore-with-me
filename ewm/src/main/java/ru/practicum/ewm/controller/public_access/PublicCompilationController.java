@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.compilation.CompilationDto;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.CompilationService;
 import ru.practicum.ewm.service.StatisticsService;
 
@@ -33,24 +32,15 @@ public class PublicCompilationController {
                                     @RequestParam(defaultValue = "0") int from,
                                     @RequestParam(defaultValue = "10") int size,
                                     HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return compilationService.findAll(pinned, from, size);
     }
 
     @GetMapping("/{compId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto get(@PathVariable int compId, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return compilationService.findById(compId);
     }
-
 
 }

@@ -20,7 +20,6 @@ import ru.practicum.ewm.dto.request.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.request.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.request.ParticipationRequestDto;
 import ru.practicum.ewm.dto.request.UpdateEventUserRequest;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.service.RequestService;
 import ru.practicum.ewm.service.StatisticsService;
@@ -46,11 +45,7 @@ public class PrivateEventController {
                                                @RequestParam(defaultValue = "0") int from,
                                                @RequestParam(defaultValue = "10") int size,
                                                HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.findByInitiator(userId, from, size);
     }
 
@@ -59,22 +54,14 @@ public class PrivateEventController {
     public EventFullDto add(@PathVariable int userId,
                             @Valid @RequestBody NewEventDto dto,
                             HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.add(userId, dto);
     }
 
     @GetMapping("/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto get(@PathVariable int userId, @PathVariable int eventId, HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.findByInitiatorAndEvent(userId, eventId);
     }
 
@@ -84,11 +71,7 @@ public class PrivateEventController {
                                @PathVariable int eventId,
                                @Valid @RequestBody UpdateEventUserRequest dto,
                                HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.userUpdate(userId, eventId, dto);
     }
 
@@ -97,11 +80,7 @@ public class PrivateEventController {
     public List<ParticipationRequestDto> getRequests(@PathVariable int userId,
                                                      @PathVariable int eventId,
                                                      HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return requestService.getRequestsInfo(userId, eventId);
     }
 
@@ -112,11 +91,8 @@ public class PrivateEventController {
             @PathVariable int eventId,
             @Valid @RequestBody EventRequestStatusUpdateRequest updateRequest,
             HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return requestService.updateRequestStatus(userId, eventId, updateRequest);
     }
+
 }

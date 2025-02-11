@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.request.UpdateEventAdminRequest;
 import ru.practicum.ewm.model.EventStatus;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.service.StatisticsService;
 
@@ -48,11 +47,7 @@ public class AdminEventController {
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request
     ) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.adminFindAll(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
@@ -61,11 +56,7 @@ public class AdminEventController {
     public EventFullDto update(@PathVariable int eventId,
                                @Valid @RequestBody UpdateEventAdminRequest dto,
                                HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.adminUpdate(eventId, dto);
     }
 

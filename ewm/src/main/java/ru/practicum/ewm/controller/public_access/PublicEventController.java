@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.ewm.dto.event.EventFullDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
-import ru.practicum.ewm.model.StatEvent;
 import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.service.StatisticsService;
 
@@ -48,11 +47,7 @@ public class PublicEventController {
             @RequestParam(defaultValue = "0") int from,
             @RequestParam(defaultValue = "10") int size,
             HttpServletRequest request) {
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         return eventService.findFilteredEvents(
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
@@ -61,11 +56,7 @@ public class PublicEventController {
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto getEventById(@PathVariable int id, HttpServletRequest request) {
         EventFullDto event = eventService.findPublishedEventById(id);
-        StatEvent statEvent = StatEvent.builder()
-                .serviceName(MAIN_SERVICE)
-                .uri(request.getRequestURI())
-                .build();
-        statService.sendStat(statEvent, request);
+        statService.sendStat(MAIN_SERVICE, request);
         int views = statService.getStats(
                 event.getCreatedOn().format(dateFormatter),
                 LocalDateTime.now().format(dateFormatter),
@@ -73,4 +64,5 @@ public class PublicEventController {
         eventService.updateViews(id, views);
         return event;
     }
+
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dal.CategoryRepository;
 import ru.practicum.ewm.dto.category.CategoryDto;
 import ru.practicum.ewm.dto.category.NewCategoryDto;
@@ -26,6 +27,7 @@ public class CategoryService {
 
     private final CategoryMapper categoryMapper;
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> findAll() {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
@@ -33,16 +35,19 @@ public class CategoryService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
         return categoryMapper.map(categoryRepository.findAll(page).toList());
     }
 
+    @Transactional(readOnly = true)
     public CategoryDto findById(int id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND + id));
         return categoryMapper.map(category);
     }
 
+    @Transactional
     public CategoryDto add(NewCategoryDto dto) {
         checkUniqueness(dto.getName());
         Category toCreate = categoryMapper.map(dto);
@@ -50,12 +55,14 @@ public class CategoryService {
         return categoryMapper.map(created);
     }
 
+    @Transactional
     public CategoryDto update(int catId, UpdateCategoryDto dto) {
         Category toUpdate = categoryMapper.map(catId, dto);
         Category updated = categoryRepository.save(toUpdate);
         return categoryMapper.map(updated);
     }
 
+    @Transactional
     public void delete(int id) {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if (categoryOptional.isEmpty()) {
