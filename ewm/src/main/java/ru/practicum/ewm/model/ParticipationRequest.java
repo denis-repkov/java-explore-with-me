@@ -1,6 +1,8 @@
 package ru.practicum.ewm.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,5 +34,6 @@ public class ParticipationRequest {
     private int requesterId;
 
     @Setter
+    @Enumerated(EnumType.STRING)
     private RequestStatus status;
 }

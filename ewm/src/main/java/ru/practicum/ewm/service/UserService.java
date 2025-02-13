@@ -10,6 +10,7 @@ import ru.practicum.ewm.dto.user.NewUserRequest;
 import ru.practicum.ewm.dto.user.UserDto;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.mapper.UserMapper;
+import ru.practicum.ewm.model.AllowedSubscriberGroup;
 import ru.practicum.ewm.model.User;
 
 import java.util.List;
@@ -58,5 +59,12 @@ public class UserService {
             throw new NotFoundException(USER_NOT_FOUND + id);
         }
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public boolean changeSubscriberGroup(int userId, AllowedSubscriberGroup newGroup) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND + userId));
+        user.setSubscriberGroup(newGroup);
+        return userRepository.save(user) != null;
     }
 }

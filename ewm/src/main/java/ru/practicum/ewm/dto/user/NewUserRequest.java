@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import ru.practicum.ewm.model.AllowedSubscriberGroup;
 
 @Data
 public class NewUserRequest {
@@ -18,4 +19,9 @@ public class NewUserRequest {
     @Email(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+", message = "Электронная почта некорректна")
     private String email;
 
+    private AllowedSubscriberGroup subscriberGroup;
+
+    public AllowedSubscriberGroup getSubscriberGroup() {
+        return (subscriberGroup != null) ? subscriberGroup : AllowedSubscriberGroup.ALL;
+    }
 }

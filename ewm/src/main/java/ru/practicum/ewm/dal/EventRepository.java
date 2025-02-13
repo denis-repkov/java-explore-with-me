@@ -68,4 +68,14 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     Event save(Event request);
 
     void deleteById(int id);
+
+    @Query("""
+                SELECT e FROM Event e
+                JOIN ParticipationRequest pr ON pr.eventId = e.id
+                JOIN Subscription s ON s.id.subscriberId = pr.requesterId
+                WHERE s.id.userId = :userId
+                AND pr.status = ru.practicum.ewm.model.RequestStatus.CONFIRMED
+                ORDER BY e.eventDate DESC
+            """)
+    List<Event> getRecommendations(int userId);
 }
