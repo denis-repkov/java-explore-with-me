@@ -19,7 +19,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Inte
 
     void deleteById(SubscriptionId id);
 
-    @Query("SELECT u from UserShort u JOIN Subscription s ON u.id = s.id.subscriberId WHERE s.id.userId = :userId")
+    @Query("SELECT u from UserShort u JOIN Subscription s ON u.id = s.id.subscriberId WHERE s.id.userId = :userId ORDER BY u.id")
     List<UserShort> findSubscribers(@Param("userId") int userId);
 
     @Query("""
