@@ -26,4 +26,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     User save(User request);
 
     void deleteById(int id);
+
+    @Query("""
+                SELECT u
+                FROM UserShort u
+                JOIN Subscription s1 ON u.id = s1.id.subscriberId
+                JOIN Subscription s2 ON s1.id.userId = s2.id.subscriberId
+                WHERE s2.id.userId = :userId
+                AND s1.id.subscriberId NOT IN (
+                    SELECT s.id.subscriberId FROM Subscription s WHERE s.id.userId = :userId
+                )
+            """)
+    List<UserShort> getRecommendations(int userId);
 }
